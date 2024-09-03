@@ -1,18 +1,23 @@
 import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
-import globals from "globals";
+import eslintConfigPrettier from "eslint-config-prettier";
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
 import unusedImports from "eslint-plugin-unused-imports";
-import eslintConfigPrettier from "eslint-config-prettier";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config({
-  extends: [eslint.configs.recommended, ...tseslint.configs.recommended, eslintPluginUnicorn.configs["flat/recommended"], eslintConfigPrettier],
+  extends: [
+    eslint.configs.recommended,
+    ...tseslint.configs.recommended,
+    eslintPluginUnicorn.configs["flat/recommended"],
+    eslintConfigPrettier,
+  ],
   languageOptions: {
-    globals: globals.node
+    globals: globals.node,
   },
   files: ["src/**/*.ts"],
   plugins: {
-      "unused-imports": unusedImports,
+    "unused-imports": unusedImports,
   },
   rules: {
     "no-console": "error",
@@ -20,7 +25,8 @@ export default tseslint.config({
     "@typescript-eslint/no-unused-vars": "off",
     "unused-imports/no-unused-imports": "warn",
     "unused-imports/no-unused-vars": [
-      "error", {
+      "error",
+      {
         args: "all",
         argsIgnorePattern: "^_",
         caughtErrors: "all",
@@ -48,5 +54,5 @@ export default tseslint.config({
     "no-var": "error",
     "operator-assignment": ["error", "always"],
     "prefer-arrow-callback": "error",
-  }
+  },
 });
