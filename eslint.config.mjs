@@ -8,5 +8,5 @@ export default tseslint.config({
   languageOptions: {
     globals: globals.node
   },
-  files: ["src"]
+  files: ["src/**/*.ts"]
 });
