@@ -16,7 +16,7 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{json,md,mjs}": "prettier --write"
+    "*.{json,md,mjs,yml}": "prettier --write"
   },
   "dependencies": {
     "cross-env": "^7.0.3",
