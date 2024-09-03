@@ -3,9 +3,10 @@ import tseslint from "typescript-eslint";
 import globals from "globals";
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
 import unusedImports from "eslint-plugin-unused-imports";
+import eslintConfigPrettier from "eslint-config-prettier";
 
 export default tseslint.config({
-  extends: [eslint.configs.recommended, ...tseslint.configs.recommended, eslintPluginUnicorn.configs["flat/recommended"]],
+  extends: [eslint.configs.recommended, ...tseslint.configs.recommended, eslintPluginUnicorn.configs["flat/recommended"], eslintConfigPrettier],
   languageOptions: {
     globals: globals.node
   },
