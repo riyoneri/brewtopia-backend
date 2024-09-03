@@ -30,13 +30,3 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "dist,package*"
           target: "brewtopia"
-
-      - name: Restart PM2 application
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd brewtopia
-            pm2 restart 0
