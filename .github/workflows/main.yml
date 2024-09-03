@@ -29,7 +29,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "dist,package*"
-          target: "chatly"
+          target: "brewtopia"
 
       - name: Restart PM2 application
         uses: appleboy/ssh-action@master
@@ -38,5 +38,5 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd chatly
+            cd brewtopia
             pm2 reload 0
