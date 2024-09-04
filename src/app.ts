@@ -1,8 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
+import helmet from "helmet";
 
 import CustomError from "./utils/custom-error";
 
 const app = express();
+
+app.use(helmet());
 
 app.use(
   (
