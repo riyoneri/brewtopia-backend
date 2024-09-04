@@ -18,7 +18,7 @@ app.use(helmet());
 app.use(compression());
 app.disable("x-powered-by");
 
-if (process.env.NODE_ENV === "development") app.use(morgan("combined"));
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.use((request: Request, response: Response, next: NextFunction) => {
   rateLimiter
