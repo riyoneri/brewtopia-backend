@@ -40,13 +40,6 @@ export default tseslint.config({
     "no-constructor-return": "error",
     "no-duplicate-imports": "error",
     "no-self-compare": "error",
-    camelcase: [
-      "error",
-      {
-        ignoreDestructuring: true,
-        ignoreImports: true,
-      },
-    ],
     "no-else-return": "error",
     "no-lonely-if": "error",
     "no-negated-condition": "error",
