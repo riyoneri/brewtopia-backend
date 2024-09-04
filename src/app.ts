@@ -1,6 +1,7 @@
 import compression from "compression";
 import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
+import { debug } from "node:console";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 
 import CustomError from "./utils/custom-error";
@@ -40,5 +41,13 @@ app.use(
   },
 );
 
-// eslint-disable-next-line no-console
-app.listen(5000, () => console.log("Server: http://localhost:5000"));
+const server = app.listen(5000, () =>
+  // eslint-disable-next-line no-console
+  console.log("Server: http://localhost:5000"),
+);
+
+process.on("SIGTERM", () => {
+  server.close(() => {
+    debug("HTTP server closed");
+  });
+});
