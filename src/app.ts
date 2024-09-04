@@ -1,4 +1,5 @@
 import compression from "compression";
+import { config } from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -6,6 +7,8 @@ import { debug } from "node:console";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 
 import CustomError from "./utils/custom-error";
+
+config();
 
 const app = express();
 
