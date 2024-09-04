@@ -35,10 +35,7 @@ jobs:
       - name: Start application
         run: pm2 start "npm start" --name brewtopia
 
-      - name: Check app status
-        run: pm2 status brewtopia || exit 1
-
-      - run: curl -f http://localhost:5000 || exit 1
+      - run: curl -f http://127.0.0.1:5000 || exit 1
 
   deploy:
     runs-on: ubuntu-latest
