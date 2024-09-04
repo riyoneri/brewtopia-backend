@@ -1,12 +1,25 @@
 import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
+import { RateLimiterMemory } from "rate-limiter-flexible";
 
 import CustomError from "./utils/custom-error";
 
 const app = express();
 
+const rateLimiter = new RateLimiterMemory({
+  points: 6,
+  duration: 2,
+});
+
 app.use(helmet());
 app.disable("x-powered-by");
+
+app.use((request: Request, response: Response, next: NextFunction) => {
+  rateLimiter
+    .consume(request.ip!)
+    .then(() => next())
+    .catch(() => response.status(429).json({ message: "Too many requests" }));
+});
 
 app.use((_request: Request, response: Response, _next: NextFunction) => {
   response.status(404).json({ message: "URL does not exist" });
