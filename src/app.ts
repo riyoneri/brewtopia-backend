@@ -1,6 +1,7 @@
 import compression from "compression";
 import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
+import morgan from "morgan";
 import { debug } from "node:console";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 
@@ -16,6 +17,8 @@ const rateLimiter = new RateLimiterMemory({
 app.use(helmet());
 app.use(compression());
 app.disable("x-powered-by");
+
+if (process.env.NODE_ENV === "development") app.use(morgan("combined"));
 
 app.use((request: Request, response: Response, next: NextFunction) => {
   rateLimiter
