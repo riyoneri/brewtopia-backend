@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "cross-env NODE_ENV=production node dist/app.js",
-    "dev": "cross-env NODE_ENV=development nodemon src/app.ts"
+    "dev": "cross-env NODE_ENV=development nodemon src/app.ts",
+    "prepare": "node .husky/install.mjs"
   },
   "author": "Lionel Kaneza",
   "license": "ISC",
