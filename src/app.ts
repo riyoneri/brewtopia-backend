@@ -8,6 +8,10 @@ const app = express();
 app.use(helmet());
 app.disable("x-powered-by");
 
+app.use((_request: Request, response: Response, _next: NextFunction) => {
+  response.status(404).json({ message: "URL does not exist" });
+});
+
 app.use(
   (
     error: CustomError,
