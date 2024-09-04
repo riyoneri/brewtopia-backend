@@ -7,6 +7,7 @@ import morgan from "morgan";
 import { debug } from "node:console";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 
+import appRouter from "./routes";
 import CustomError from "./utils/custom-error";
 
 config();
@@ -31,6 +32,8 @@ app.use((request: Request, response: Response, next: NextFunction) => {
     .then(() => next())
     .catch(() => response.status(429).json({ message: "Too many requests" }));
 });
+
+app.use(appRouter);
 
 app.use((_request: Request, response: Response, _next: NextFunction) => {
   response.status(404).json({ message: "URL does not exist" });
