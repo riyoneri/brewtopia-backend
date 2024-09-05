@@ -1,3 +1,4 @@
+import bodyParser from "body-parser";
 import compression from "compression";
 import cors from "cors";
 import { config } from "dotenv";
@@ -23,6 +24,7 @@ app.use(helmet());
 app.use(compression());
 app.disable("x-powered-by");
 app.use(cors());
+app.use(bodyParser.json());
 
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
