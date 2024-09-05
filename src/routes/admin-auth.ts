@@ -2,6 +2,7 @@ import express from "express";
 import { body } from "express-validator";
 
 import { adminAuthController } from "../controllers";
+import { Admin } from "../models";
 
 const router = express.Router();
 
@@ -16,8 +17,15 @@ router.post(
       .isString()
       .notEmpty({ ignore_whitespace: true })
       .isEmail()
+      .withMessage("Email must be valid")
       .trim()
-      .normalizeEmail({ all_lowercase: true }),
+      .normalizeEmail({ all_lowercase: true })
+      .bail()
+      .custom((value) =>
+        Admin.findOne({ "email.value": value }).then((admin) => {
+          if (admin) throw "Email already exists";
+        }),
+      ),
     body("password", "Password is required")
       .isString()
       .notEmpty({ ignore_whitespace: true })
