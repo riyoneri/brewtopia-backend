@@ -47,5 +47,6 @@ export default tseslint.config({
     "no-var": "error",
     "operator-assignment": ["error", "always"],
     "prefer-arrow-callback": "error",
+    "unicorn/no-array-reduce": "off",
   },
 });
