@@ -60,7 +60,6 @@ app.use(
 );
 
 connect(MONGODB_URL!)
-  // eslint-disable-next-line unicorn/prefer-top-level-await
   .then(() => {
     const server = app.listen(PORT, () =>
       // eslint-disable-next-line no-console
@@ -72,5 +71,9 @@ connect(MONGODB_URL!)
         debug("HTTP server closed");
       });
     });
+  })
+  // eslint-disable-next-line unicorn/prefer-top-level-await
+  .catch(() => {
+    throw "Error occurred while trying to connect to the server"
   })
 
