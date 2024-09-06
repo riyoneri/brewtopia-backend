@@ -5,17 +5,13 @@ on:
     branches: [ft/test-deployment]
 
 jobs:
-  test-deployment:
+  deployment-validate:
     runs-on: ubuntu-latest
-
     steps:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-
-      - name: Install pm2 package globally
-        run: npm install pm2@latest -g
 
       - name: Checkout the repository
         uses: actions/checkout@v4
@@ -26,17 +22,18 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      - name: Remove node_modules folder
-        run: rm -rf node_modules
+      - name: Remove development files and folder
+        run: rm -rf .husky/ src/ node_modules/
 
       - name: Install production packages
-        run: npm i --production
+        run: npm i --omit=dev
 
       - name: Start application
-        run: npm start
+        run: npm start &
 
   deploy:
-    needs: [test-deployment]
+    needs: deployment-validate
+
     runs-on: ubuntu-latest
 
     steps:
@@ -45,7 +42,8 @@ jobs:
         with:
           node-version: "20.x"
 
-      - uses: actions/checkout@v4
+      - name: Checkout the repository
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: npm install
