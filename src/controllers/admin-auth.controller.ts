@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
+import getVerificationEmail from "../helpers/emails/verification-email";
+import resend from "../helpers/get-resend";
 import getCustomValidationResults from "../helpers/get-validation-results";
 import { Admin } from "../models";
 import CustomError from "../utils/custom-error";
@@ -51,6 +53,13 @@ export const createAdmin = async (
       const error = new CustomError("Validation error", 400, validationErrors);
       return next(error);
     }
+
+    await resend.emails.send({
+      from: "BrewTopia <onboarding@resend.dev>",
+      to: [request.body.email],
+      subject: "Welcome to BrewTopia!",
+      html: getVerificationEmail(request.body.redirectUrl),
+    });
 
     response.status(401).json({ message: "Reached here" });
   } catch {
