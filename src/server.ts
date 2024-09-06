@@ -12,7 +12,9 @@ const PORT = process.env.PORT || 5000;
 
 config();
 
-connect(MONGODB_URL!)
+if (!MONGODB_URL) exit(1);
+
+connect(MONGODB_URL)
   .then(() => {
     const server = app.listen(PORT, () =>
       // eslint-disable-next-line no-console
