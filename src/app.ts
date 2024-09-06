@@ -59,20 +59,18 @@ app.use(
   },
 );
 
-if (MONGODB_URL)
-  connect(MONGODB_URL)
-    .then(() => {
-      const server = app.listen(PORT, () =>
-        // eslint-disable-next-line no-console
-        console.log(`Server: http://localhost:${5000}`),
-      );
+connect(MONGODB_URL!)
+  // eslint-disable-next-line unicorn/prefer-top-level-await
+  .then(() => {
+    const server = app.listen(PORT, () =>
+      // eslint-disable-next-line no-console
+      console.log(`Server: http://localhost:${5000}`),
+    );
 
-      process.on("SIGTERM", () => {
-        server.close(() => {
-          debug("HTTP server closed");
-        });
+    process.on("SIGTERM", () => {
+      server.close(() => {
+        debug("HTTP server closed");
       });
-    })
-    // eslint-disable-next-line unicorn/prefer-top-level-await
-    .catch(() => exit(1));
-else exit(1);
+    });
+  })
+
