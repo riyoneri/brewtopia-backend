@@ -63,6 +63,11 @@ router
       body("confirmPassword", "Confirm password is required")
         .custom((value, { req }) => req.body.password === value)
         .withMessage("Passwords must match"),
+      body("redirectUrl", "Redirect url is required")
+        .isString()
+        .notEmpty({ ignore_whitespace: true })
+        .isURL({ require_protocol: true, allow_query_components: false })
+        .withMessage("Redirect url must be a valid url"),
     ],
     adminAuthController.createAdmin,
   );
