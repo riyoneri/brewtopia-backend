@@ -31,7 +31,7 @@ app.use((request: Request, response: Response, next: NextFunction) => {
     .catch(() => response.status(429).json({ message: "Too many requests" }));
 });
 
-app.use(appRouter);
+app.use("/api", appRouter);
 
 app.use((_request: Request, response: Response, _next: NextFunction) => {
   response.status(404).json({ message: "URL does not exist" });
