@@ -26,7 +26,7 @@ jobs:
         run: rm -rf .husky/ src/ node_modules/
 
       - name: Install production packages
-        run: npm i --production
+        run: npm i --omit=dev
 
       - name: Start application
         run: npm start &
