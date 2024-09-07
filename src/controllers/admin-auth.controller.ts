@@ -135,3 +135,47 @@ export const resendVerificationEmail = async (
     next(error);
   }
 };
+
+export const verifyEmail = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getCustomValidationResults(request);
+
+    if (validationErrors) {
+      const error = new CustomError("Validation error", 400, validationErrors);
+      return next(error);
+    }
+
+    const admin = await Admin.findOne({
+      $and: [
+        {
+          "authTokens.emailVerification": request.body.token,
+        },
+        {
+          "email.verified": false,
+        },
+      ],
+    });
+
+    if (!admin) {
+      const error = new CustomError("User not found", 404);
+
+      return next(error);
+    }
+
+    admin.authTokens.emailVerification = undefined;
+    admin.email.verified = true;
+
+    await admin.save();
+
+    response
+      .status(200)
+      .json({ message: "Email has been verified successfully" });
+  } catch {
+    const error = new CustomError("Internal serverError.");
+    next(error);
+  }
+};
