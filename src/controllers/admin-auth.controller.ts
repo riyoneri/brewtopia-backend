@@ -74,13 +74,62 @@ export const createAdmin = async (
     await resend.emails.send({
       from: "BrewTopia <onboarding@resend.dev>",
       to: [request.body.email],
-      subject: "Welcome to BrewTopia!",
+      subject: "Welcome to BrewTopia",
       html: getVerificationEmail(
         `${request.body.redirectUrl}?token=${emailUniqueId}`,
       ),
     });
 
     response.status(201).json(savedAdmin.toJSON());
+  } catch {
+    const error = new CustomError("Internal serverError.");
+    next(error);
+  }
+};
+
+export const resendVerificationEmail = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getCustomValidationResults(request);
+
+    if (validationErrors) {
+      const error = new CustomError("Validation error", 400, validationErrors);
+      return next(error);
+    }
+
+    const admin = await Admin.findOne({ "email.value": request.body.email });
+
+    if (!admin) {
+      const error = new CustomError("User not found", 404);
+
+      return next(error);
+    }
+
+    if (admin.email.verified) {
+      const error = new CustomError("Email is already verified", 401);
+
+      return next(error);
+    }
+
+    const emailUniqueId = getVerifyEmailUniqueId();
+
+    admin.authTokens.emailVerification = emailUniqueId;
+
+    await admin.save();
+
+    await resend.emails.send({
+      from: "BrewTopia <onboarding@resend.dev>",
+      to: [request.body.email],
+      subject: "Welcome to BrewTopia",
+      html: getVerificationEmail(
+        `${request.body.redirectUrl}?token=${emailUniqueId}`,
+      ),
+    });
+
+    response.status(201).json({ message: "Verification email is resent" });
   } catch {
     const error = new CustomError("Internal serverError.");
     next(error);
