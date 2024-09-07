@@ -1,6 +1,8 @@
+import { hash } from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 
 import getVerificationEmail from "../helpers/emails/verification-email";
+import { getVerifyEmailUniqueId } from "../helpers/generate-unique-id";
 import resend from "../helpers/get-resend";
 import getCustomValidationResults from "../helpers/get-validation-results";
 import { Admin } from "../models";
@@ -54,14 +56,31 @@ export const createAdmin = async (
       return next(error);
     }
 
+    const hashedPassword = await hash(request.body.password, 12);
+
+    const emailUniqueId = getVerifyEmailUniqueId();
+
+    const newAdminData = new Admin({
+      name: request.body.name,
+      email: { value: request.body.email },
+      password: hashedPassword,
+      authTokens: {
+        emailVerification: emailUniqueId,
+      },
+    });
+
+    const savedAdmin = await newAdminData.save();
+
     await resend.emails.send({
       from: "BrewTopia <onboarding@resend.dev>",
       to: [request.body.email],
       subject: "Welcome to BrewTopia!",
-      html: getVerificationEmail(request.body.redirectUrl),
+      html: getVerificationEmail(
+        `${request.body.redirectUrl}?token=${emailUniqueId}`,
+      ),
     });
 
-    response.status(401).json({ message: "Reached here" });
+    response.status(201).json(savedAdmin.toJSON());
   } catch {
     const error = new CustomError("Internal serverError.");
     next(error);
