@@ -70,6 +70,25 @@ router
         .withMessage("Redirect url must be a valid url"),
     ],
     adminAuthController.createAdmin,
+  )
+  .post(
+    "/resend-verification-email",
+    [
+      body("email", "Email is required")
+        .isString()
+        .notEmpty({ ignore_whitespace: true })
+        .isEmail()
+        .withMessage("Email must be valid")
+        .trim()
+        .normalizeEmail({ all_lowercase: true })
+        .bail(),
+      body("redirectUrl", "Redirect url is required")
+        .isString()
+        .notEmpty({ ignore_whitespace: true })
+        .isURL({ require_protocol: true, allow_query_components: false })
+        .withMessage("Redirect url must be a valid url"),
+    ],
+    adminAuthController.resendVerificationEmail,
   );
 
 export default router;
