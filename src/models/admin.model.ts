@@ -57,6 +57,7 @@ const adminSchema = new Schema<IAdmin, AdminModelType>(
         verified: {
           type: Boolean,
           required: true,
+          default: false,
         },
       },
       required: true,
@@ -72,6 +73,7 @@ const adminSchema = new Schema<IAdmin, AdminModelType>(
           expirationDate: Date,
         },
       },
+      _id: false,
     },
     notifications: {
       type: [
@@ -108,7 +110,9 @@ const adminSchema = new Schema<IAdmin, AdminModelType>(
           id: document.id,
           ...returnValue,
           email: returnValue.email.value,
-          imageUrl: `${process.env.AWS_DISTRIBUTION_DOMAIN_NAME}/${returnValue.imageUrl}`,
+          imageUrl: returnValue.imageUrl
+            ? `${process.env.AWS_DISTRIBUTION_DOMAIN_NAME}/${returnValue.imageUrl}`
+            : undefined,
         };
       },
     },
