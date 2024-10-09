@@ -1,5 +1,5 @@
 import express from "express";
-import { body } from "express-validator";
+import { body, header } from "express-validator";
 
 import { adminAuthController } from "../controllers";
 import { Admin } from "../models";
@@ -14,18 +14,31 @@ router
         .isString()
         .notEmpty({ ignore_whitespace: true })
         .trim(),
-      body("email", "Email is required")
+      body("email", "Email must be valid google mail")
         .isString()
         .notEmpty({ ignore_whitespace: true })
-        .isEmail()
-        .withMessage("Email must be valid")
+        .isEmail({ host_whitelist: ["gmail.com"] })
         .trim()
         .normalizeEmail({ all_lowercase: true }),
-      body("image", "Image must be valid url")
-        .optional({ values: "undefined" })
+      body("picture", "Image must be valid google image url")
         .isString()
+        .optional({ values: "undefined" })
+        .isURL({ host_whitelist: ["lh3.googleusercontent.com"] })
         .notEmpty({ ignore_whitespace: true })
         .trim(),
+      header("authorization", "Callback token is required")
+        .isString()
+        .notEmpty({ ignore_whitespace: true })
+        .bail()
+        .custom((value) => {
+          try {
+            const callbackToken = value.split(" ")[1];
+            return process.env.CALLBACK_TOKEN === callbackToken;
+          } catch {
+            return false;
+          }
+        })
+        .withMessage("Callback token is invalid"),
     ],
     adminAuthController.authWithGoogle,
   )
