@@ -46,7 +46,7 @@ app.use(
   ) => {
     const { message, errors, statusCode } = error;
 
-    response.status(statusCode || 500).json({ message: errors || message });
+    response.status(statusCode || 500).json({ message, errors });
   },
 );
 
