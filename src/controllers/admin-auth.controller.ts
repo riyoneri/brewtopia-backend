@@ -31,7 +31,7 @@ export const authWithGoogle = async (
         value: request.body.email,
         verified: true,
       },
-      imageUrl: request.body.image,
+      imageUrl: request.body.picture,
     });
 
     const savedAdmin = await newAdminData.save();
