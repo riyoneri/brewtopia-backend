@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  test-app:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +26,8 @@ jobs:
       - name: Test the app
         run: npm test
 
-  deployment-validate:
-    needs: test
+  validate-deployment:
+    needs: test-app
     runs-on: ubuntu-latest
     steps:
       - name: Set up Node.js
@@ -54,7 +54,7 @@ jobs:
         run: npm start &
 
   deploy:
-    needs: deployment-validate
+    needs: [test-app, validate-deployment]
 
     runs-on: ubuntu-latest
 
