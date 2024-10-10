@@ -25,7 +25,7 @@ const getUserVerificationemail = (redirectUrl: string) => `
           <div style="font-family: 'DM Sans', sans-serif; margin-top: 20px">
             <table style="font-family: 'DM Sans', sans-serif; margin-top: 20px;" cellpadding="0" cellspacing="0" role="none">
               <tr style="font-family: 'DM Sans', sans-serif;">
-                <td style="font-family: 'DM Sans', sans-serif;">
+                <td style="font-family: 'DM Sans', sans-serif; text-align: center;">
                   Thank you for registering with <span style="font-family: 'DM Sans', sans-serif; font-weight: 600">BrewTopia</span>! Please click the button below to verify your email address and complete your registration.
                 </td>
               </tr>
