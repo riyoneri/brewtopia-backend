@@ -87,6 +87,29 @@ router
         .withMessage("Redirect url must be a valid url"),
     ],
     userAuthController.createUser,
+  )
+  .post(
+    "/resend-verification-email",
+    [
+      body("email", "Email is required")
+        .isString()
+        .notEmpty({ ignore_whitespace: true })
+        .isEmail()
+        .withMessage("Email must be valid")
+        .trim()
+        .normalizeEmail({ all_lowercase: true })
+        .bail(),
+      body("redirectUrl", "Redirect url is required")
+        .isString()
+        .notEmpty({ ignore_whitespace: true })
+        .isURL({
+          require_protocol: true,
+          allow_query_components: false,
+          require_tld: process.env.NODE_ENV === "production",
+        })
+        .withMessage("Redirect url must be a valid url"),
+    ],
+    userAuthController.resendVerificationEmail,
   );
 
 export default router;
