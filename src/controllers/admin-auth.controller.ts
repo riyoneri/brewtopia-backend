@@ -1,7 +1,7 @@
 import { hash } from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 
-import getVerificationEmail from "../helpers/emails/verification-email";
+import getAdminVerificationEmail from "../helpers/emails/admin-verification-email";
 import { getVerifyEmailUniqueId } from "../helpers/generate-unique-id";
 import resend from "../helpers/get-resend";
 import getCustomValidationResults from "../helpers/get-validation-results";
@@ -72,10 +72,10 @@ export const createAdmin = async (
     const savedAdmin = await newAdminData.save();
 
     await resend.emails.send({
-      from: "BrewTopia <onboarding@resend.dev>",
+      from: "BrewTopia Admin <onboarding@resend.dev>",
       to: [request.body.email],
-      subject: "Welcome to BrewTopia",
-      html: getVerificationEmail(
+      subject: "Verify Admin",
+      html: getAdminVerificationEmail(
         `${request.body.redirectUrl}?token=${emailUniqueId}`,
       ),
     });
@@ -123,8 +123,8 @@ export const resendVerificationEmail = async (
     await resend.emails.send({
       from: "BrewTopia <onboarding@resend.dev>",
       to: [request.body.email],
-      subject: "Welcome to BrewTopia",
-      html: getVerificationEmail(
+      subject: "Verify Admin",
+      html: getAdminVerificationEmail(
         `${request.body.redirectUrl}?token=${emailUniqueId}`,
       ),
     });
