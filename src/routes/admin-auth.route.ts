@@ -79,7 +79,11 @@ router
       body("redirectUrl", "Redirect url is required")
         .isString()
         .notEmpty({ ignore_whitespace: true })
-        .isURL({ require_protocol: true, allow_query_components: false })
+        .isURL({
+          require_protocol: true,
+          allow_query_components: false,
+          require_tld: process.env.NODE_ENV === "production",
+        })
         .withMessage("Redirect url must be a valid url"),
     ],
     adminAuthController.createAdmin,
@@ -98,7 +102,11 @@ router
       body("redirectUrl", "Redirect url is required")
         .isString()
         .notEmpty({ ignore_whitespace: true })
-        .isURL({ require_protocol: true, allow_query_components: false })
+        .isURL({
+          require_protocol: true,
+          allow_query_components: false,
+          require_tld: process.env.NODE_ENV === "production",
+        })
         .withMessage("Redirect url must be a valid url"),
     ],
     adminAuthController.resendVerificationEmail,
