@@ -34,7 +34,7 @@ export const authWithGoogle = async (
 
     response.status(201).json(savedUser.toJSON());
   } catch {
-    const error = new CustomError("Lion");
+    const error = new CustomError("Internal serverError.");
     next(error);
   }
 };
