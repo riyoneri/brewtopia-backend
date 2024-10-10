@@ -86,3 +86,52 @@ export const createUser = async (
     next(error);
   }
 };
+
+export const resendVerificationEmail = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getCustomValidationResults(request);
+
+    if (validationErrors) {
+      const error = new CustomError("Validation error", 400, validationErrors);
+      return next(error);
+    }
+
+    const user = await User.findOne({ "email.value": request.body.email });
+
+    if (!user) {
+      const error = new CustomError("User not found", 404);
+
+      return next(error);
+    }
+
+    if (user.email.verified) {
+      const error = new CustomError("Email is already verified", 403);
+
+      return next(error);
+    }
+
+    const emailUniqueId = getVerifyEmailUniqueId();
+
+    user.authTokens.emailVerification = emailUniqueId;
+
+    await user.save();
+
+    await resend.emails.send({
+      from: "BrewTopia <onboarding@resend.dev>",
+      to: [user.email.value],
+      subject: "Verify Your Email",
+      html: getUserVerificationEmail(
+        `${request.body.redirectUrl}?token=${emailUniqueId}`,
+      ),
+    });
+
+    response.status(209).json({ message: "Verification email is resent" });
+  } catch {
+    const error = new CustomError("Internal serverError.");
+    next(error);
+  }
+};
