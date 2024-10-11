@@ -1,4 +1,5 @@
 import { hash } from "bcrypt";
+import dayjs from "dayjs";
 import { NextFunction, Request, Response } from "express";
 
 import {
@@ -6,8 +7,12 @@ import {
   ValidationErrorMessage,
   getNotFoundMessage,
 } from "../constants/response-messages";
+import getAdminResetPasswordEmail from "../helpers/emails/admin-reset-password";
 import getAdminVerificationEmail from "../helpers/emails/admin-verification-email";
-import { getVerifyEmailUniqueId } from "../helpers/generate-unique-id";
+import {
+  getResetPasswordUniqueId,
+  getVerifyEmailUniqueId,
+} from "../helpers/generate-unique-id";
 import resend from "../helpers/get-resend";
 import getCustomValidationResults from "../helpers/get-validation-results";
 import { Admin } from "../models";
@@ -195,6 +200,75 @@ export const verifyEmail = async (
     response
       .status(200)
       .json({ message: "Email has been verified successfully" });
+  } catch {
+    const error = new CustomError(ServerErrorMessage);
+    next(error);
+  }
+};
+
+export const forgotPassword = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getCustomValidationResults(request);
+
+    if (validationErrors) {
+      const error = new CustomError(
+        ValidationErrorMessage,
+        400,
+        validationErrors,
+      );
+      return next(error);
+    }
+
+    const admin = await Admin.findOne({ "email.value": request.body.email });
+
+    if (!admin) {
+      const error = new CustomError(getNotFoundMessage("User"), 404);
+      return next(error);
+    }
+
+    if (!admin.password) {
+      const error = new CustomError(
+        "Password reset is not available for accounts authenticated via Google",
+        403,
+      );
+
+      return next(error);
+    }
+
+    const resetPasswordId = getResetPasswordUniqueId();
+
+    admin.authTokens.resetPassword = {
+      expirationDate: dayjs().add(15, "minutes").toISOString(),
+      value: resetPasswordId,
+    };
+
+    await admin.save();
+
+    let adminFirstname = "";
+
+    try {
+      adminFirstname = admin.name.split(" ")[0];
+    } catch {
+      adminFirstname = admin.name;
+    }
+
+    await resend.emails.send({
+      from: "BrewTopia <onboarding@resend.dev>",
+      to: [admin.email.value],
+      subject: "Admin Password Reset Request",
+      html: getAdminResetPasswordEmail(
+        adminFirstname,
+        `${request.body.redirectUrl}?token=${resetPasswordId}`,
+      ),
+    });
+
+    return response
+      .status(200)
+      .json({ message: "Reset password instructions are sent." });
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);
