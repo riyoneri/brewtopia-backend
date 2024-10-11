@@ -1,4 +1,4 @@
-import { hash } from "bcrypt";
+import { compare, hash } from "bcrypt";
 import dayjs from "dayjs";
 import { NextFunction, Request, Response } from "express";
 
@@ -269,6 +269,62 @@ export const forgotPassword = async (
     return response
       .status(200)
       .json({ message: "Reset password instructions are sent." });
+  } catch {
+    const error = new CustomError(ServerErrorMessage);
+    next(error);
+  }
+};
+
+export const resetPassword = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getCustomValidationResults(request);
+
+    if (validationErrors) {
+      const error = new CustomError(
+        ValidationErrorMessage,
+        400,
+        validationErrors,
+      );
+      return next(error);
+    }
+
+    const user = await User.findOne({
+      $and: [
+        { "authTokens.resetPassword.value": request.body.token },
+        {
+          "authTokens.resetPassword.expirationDate": { $gt: dayjs().toJSON() },
+        },
+      ],
+    });
+
+    if (!user || !user.password) {
+      const error = new CustomError("Invalid or expired reset token", 403);
+      return next(error);
+    }
+
+    const isSamePassword = await compare(request.body.password, user.password);
+
+    if (isSamePassword) {
+      const error = new CustomError(
+        "New password cannot be the same as the previous password.",
+        400,
+      );
+
+      return next(error);
+    }
+
+    user.authTokens.resetPassword = undefined;
+    user.password = await hash(request.body.password, 12);
+
+    await user.save();
+
+    return response
+      .status(200)
+      .json({ message: "Password is updated successfully" });
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);
