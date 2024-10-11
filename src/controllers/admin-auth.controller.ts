@@ -1,6 +1,11 @@
 import { hash } from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 
+import {
+  ServerErrorMessage,
+  ValidationErrorMessage,
+  getNotFoundMessage,
+} from "../constants/response-messages";
 import getAdminVerificationEmail from "../helpers/emails/admin-verification-email";
 import { getVerifyEmailUniqueId } from "../helpers/generate-unique-id";
 import resend from "../helpers/get-resend";
@@ -17,7 +22,11 @@ export const authWithGoogle = async (
     const validationErrors = getCustomValidationResults(request);
 
     if (validationErrors) {
-      const error = new CustomError("Validation error", 400, validationErrors);
+      const error = new CustomError(
+        ValidationErrorMessage,
+        400,
+        validationErrors,
+      );
       return next(error);
     }
 
@@ -38,7 +47,7 @@ export const authWithGoogle = async (
 
     response.status(201).json(savedAdmin.toJSON());
   } catch {
-    const error = new CustomError("Internal serverError.");
+    const error = new CustomError(ServerErrorMessage);
     next(error);
   }
 };
@@ -52,7 +61,11 @@ export const createAdmin = async (
     const validationErrors = getCustomValidationResults(request);
 
     if (validationErrors) {
-      const error = new CustomError("Validation error", 400, validationErrors);
+      const error = new CustomError(
+        ValidationErrorMessage,
+        400,
+        validationErrors,
+      );
       return next(error);
     }
 
@@ -82,7 +95,7 @@ export const createAdmin = async (
 
     response.status(201).json(savedAdmin.toJSON());
   } catch {
-    const error = new CustomError("Internal serverError.");
+    const error = new CustomError(ServerErrorMessage);
     next(error);
   }
 };
@@ -96,14 +109,18 @@ export const resendVerificationEmail = async (
     const validationErrors = getCustomValidationResults(request);
 
     if (validationErrors) {
-      const error = new CustomError("Validation error", 400, validationErrors);
+      const error = new CustomError(
+        ValidationErrorMessage,
+        400,
+        validationErrors,
+      );
       return next(error);
     }
 
     const admin = await Admin.findOne({ "email.value": request.body.email });
 
     if (!admin) {
-      const error = new CustomError("User not found", 404);
+      const error = new CustomError(getNotFoundMessage("User"), 404);
 
       return next(error);
     }
@@ -131,7 +148,7 @@ export const resendVerificationEmail = async (
 
     response.status(201).json({ message: "Verification email is resent" });
   } catch {
-    const error = new CustomError("Internal serverError.");
+    const error = new CustomError(ServerErrorMessage);
     next(error);
   }
 };
@@ -145,7 +162,11 @@ export const verifyEmail = async (
     const validationErrors = getCustomValidationResults(request);
 
     if (validationErrors) {
-      const error = new CustomError("Validation error", 400, validationErrors);
+      const error = new CustomError(
+        ValidationErrorMessage,
+        400,
+        validationErrors,
+      );
       return next(error);
     }
 
@@ -161,7 +182,7 @@ export const verifyEmail = async (
     });
 
     if (!admin) {
-      const error = new CustomError("User not found", 404);
+      const error = new CustomError(getNotFoundMessage("User"), 404);
 
       return next(error);
     }
@@ -175,7 +196,7 @@ export const verifyEmail = async (
       .status(200)
       .json({ message: "Email has been verified successfully" });
   } catch {
-    const error = new CustomError("Internal serverError.");
+    const error = new CustomError(ServerErrorMessage);
     next(error);
   }
 };
