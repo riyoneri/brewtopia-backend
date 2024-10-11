@@ -110,6 +110,16 @@ router
         .withMessage("Redirect url must be a valid url"),
     ],
     userAuthController.resendVerificationEmail,
+  )
+  .post(
+    "/verify-email",
+    [
+      body("token", "Token is required")
+        .isString()
+        .notEmpty({ ignore_whitespace: true })
+        .trim(),
+    ],
+    userAuthController.verifyEmail,
   );
 
 export default router;
