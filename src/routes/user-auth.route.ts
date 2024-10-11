@@ -121,7 +121,7 @@ router
     userAuthController.verifyEmail,
   )
   .post(
-    "/reset-password",
+    "/forgot-password",
     [
       body("email", "Email is required")
         .isString()
