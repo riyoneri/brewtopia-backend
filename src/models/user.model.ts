@@ -40,11 +40,14 @@ const userSchema = new Schema<IUser>(
     imageUrl: String,
     active: { type: Boolean, required: true, default: true },
     authTokens: {
-      emailVerification: String,
-      resetPassword: {
-        type: {
-          value: String,
-          expirationDate: Date,
+      type: {
+        emailVerification: String,
+        resetPassword: {
+          type: {
+            value: String,
+            expirationDate: Date,
+          },
+          _id: false,
         },
       },
       _id: false,

@@ -66,11 +66,14 @@ const adminSchema = new Schema<IAdmin, AdminModelType>(
     password: String,
     imageUrl: String,
     authTokens: {
-      emailVerification: String,
-      resetPassword: {
-        type: {
-          value: String,
-          expirationDate: Date,
+      type: {
+        emailVerification: String,
+        resetPassword: {
+          type: {
+            value: String,
+            expirationDate: Date,
+          },
+          _id: false,
         },
       },
       _id: false,
