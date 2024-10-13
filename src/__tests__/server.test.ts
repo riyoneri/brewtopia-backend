@@ -1,4 +1,3 @@
-import { config } from "dotenv";
 import { connect } from "mongoose";
 import { IncomingMessage, Server, ServerResponse } from "node:http";
 
@@ -8,8 +7,6 @@ import { environment } from "../config";
 const TESTING_PORT = 5001;
 
 let server: Server<typeof IncomingMessage, typeof ServerResponse>;
-
-config();
 
 describe("Server", () => {
   afterAll(() => server.close());
