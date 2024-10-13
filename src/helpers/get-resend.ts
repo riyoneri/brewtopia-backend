@@ -1,8 +1,10 @@
 import { config } from "dotenv";
 import { Resend } from "resend";
 
+import { environment } from "../config";
+
 config();
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(environment.resendApiKey);
 
 export default resend;

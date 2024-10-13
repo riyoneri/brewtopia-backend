@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
+import { environment } from "../config";
 import {
   InvalidCredentialsMessage,
   ServerErrorMessage,
@@ -19,8 +20,6 @@ import resend from "../helpers/get-resend";
 import getCustomValidationResults from "../helpers/get-validation-results";
 import { User } from "../models";
 import CustomError from "../utils/custom-error";
-
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as string;
 
 export const authWithGoogle = async (
   request: Request,
@@ -41,7 +40,7 @@ export const authWithGoogle = async (
 
     const user = await User.findOne({ "email.value": request.body.email });
 
-    const token = jwt.sign({ id: user?.id }, JWT_SECRET_KEY, {
+    const token = jwt.sign({ id: user?.id }, environment.jwtSecret, {
       expiresIn: "1h",
     });
 
@@ -388,7 +387,7 @@ export const login = async (
       return next(error);
     }
 
-    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, {
+    const token = jwt.sign({ id: user.id }, environment.jwtSecret, {
       expiresIn: "1h",
     });
 

@@ -1,6 +1,7 @@
 import express from "express";
 import { body, header } from "express-validator";
 
+import { environment } from "../config";
 import { adminAuthController } from "../controllers";
 import { Admin } from "../models";
 
@@ -33,7 +34,7 @@ router
         .custom((value) => {
           try {
             const callbackToken = value.split(" ")[1];
-            return process.env.CALLBACK_TOKEN === callbackToken;
+            return environment.callbackToken === callbackToken;
           } catch {
             return false;
           }
@@ -82,7 +83,7 @@ router
         .isURL({
           require_protocol: true,
           allow_query_components: false,
-          require_tld: process.env.NODE_ENV === "production",
+          require_tld: environment.nodeEnv === "production",
         })
         .withMessage("Redirect url must be a valid url"),
     ],
@@ -105,7 +106,7 @@ router
         .isURL({
           require_protocol: true,
           allow_query_components: false,
-          require_tld: process.env.NODE_ENV === "production",
+          require_tld: environment.nodeEnv === "production",
         })
         .withMessage("Redirect url must be a valid url"),
     ],
@@ -137,7 +138,7 @@ router
         .isURL({
           require_protocol: true,
           allow_query_components: false,
-          require_tld: process.env.NODE_ENV === "production",
+          require_tld: environment.nodeEnv === "production",
         })
         .withMessage("Redirect url must be a valid url"),
     ],

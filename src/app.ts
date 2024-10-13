@@ -6,6 +6,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { RateLimiterMemory } from "rate-limiter-flexible";
 
+import { environment } from "./config";
 import appRouter from "./routes";
 import CustomError from "./utils/custom-error";
 
@@ -22,7 +23,7 @@ app.disable("x-powered-by");
 app.use(cors());
 app.use(bodyParser.json());
 
-if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
+if (environment.nodeEnv === "development") app.use(morgan("dev"));
 
 app.use((request: Request, response: Response, next: NextFunction) => {
   rateLimiter
