@@ -1,24 +1,15 @@
-import { config } from "dotenv";
-import { connect } from "mongoose";
 import { debug } from "node:console";
 import { exit } from "node:process";
 
 import app from "./app";
+import { environment } from "./config";
+import connectDatabase from "./config/database";
 
-config();
-
-const MONGODB_URL = process.env.MONGODB_URL;
-const PORT = process.env.PORT || 5000;
-
-config();
-
-if (!MONGODB_URL) exit(1);
-
-connect(MONGODB_URL)
+connectDatabase()
   .then(() => {
-    const server = app.listen(PORT, () =>
+    const server = app.listen(environment.port, () =>
       // eslint-disable-next-line no-console
-      console.log(`Server: http://localhost:${5000}`),
+      console.log(`Server: http://localhost:${environment.port}`),
     );
 
     process.on("SIGTERM", () => {
