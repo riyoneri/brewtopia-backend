@@ -165,6 +165,23 @@ router
         .withMessage("Passwords must match"),
     ],
     userAuthController.resetPassword,
+  )
+  .post(
+    "/login",
+    [
+      body(
+        ["email", "password"],
+        "Email and Password must be available in body",
+      )
+        .isString()
+        .notEmpty({ ignore_whitespace: true }),
+      body("email")
+        .isString()
+        .isEmail()
+        .trim()
+        .normalizeEmail({ all_lowercase: true }),
+    ],
+    userAuthController.login,
   );
 
 export default router;
