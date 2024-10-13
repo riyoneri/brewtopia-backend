@@ -1,12 +1,13 @@
 import { compare, hash } from "bcrypt";
 import dayjs from "dayjs";
 import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 
 import {
   ServerErrorMessage,
   ValidationErrorMessage,
   getNotFoundMessage,
-} from "../constants/response-messages";
+} from "../constants";
 import getUserResetPasswordEmail from "../helpers/emails/user-reset-password";
 import getUserVerificationEmail from "../helpers/emails/user-verification-email";
 import {
@@ -17,6 +18,8 @@ import resend from "../helpers/get-resend";
 import getCustomValidationResults from "../helpers/get-validation-results";
 import { User } from "../models";
 import CustomError from "../utils/custom-error";
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as string;
 
 export const authWithGoogle = async (
   request: Request,
@@ -37,7 +40,11 @@ export const authWithGoogle = async (
 
     const user = await User.findOne({ "email.value": request.body.email });
 
-    if (user) return response.status(200).json(user.toJSON());
+    const token = jwt.sign({ id: user?.id }, JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    if (user) return response.status(200).json({ user: user.toJSON(), token });
 
     const newUserData = new User({
       name: request.body.name,
@@ -50,7 +57,7 @@ export const authWithGoogle = async (
 
     const savedUser = await newUserData.save();
 
-    response.status(201).json(savedUser.toJSON());
+    response.status(201).json({ user: savedUser.toJSON(), token });
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);
