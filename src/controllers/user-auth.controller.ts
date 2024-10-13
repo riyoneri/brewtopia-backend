@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
 import {
+  InvalidCredentialsMessage,
   ServerErrorMessage,
   ValidationErrorMessage,
   getNotFoundMessage,
@@ -332,6 +333,66 @@ export const resetPassword = async (
     return response
       .status(200)
       .json({ message: "Password is updated successfully" });
+  } catch {
+    const error = new CustomError(ServerErrorMessage);
+    next(error);
+  }
+};
+
+export const login = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getCustomValidationResults(request);
+
+    if (validationErrors) {
+      const error = new CustomError(
+        "Email and Password must be available in body",
+        400,
+        validationErrors,
+      );
+
+      return next(error);
+    }
+
+    const user = await User.findOne({ "email.value": request.body.email });
+
+    if (!user) {
+      const error = new CustomError(InvalidCredentialsMessage, 401);
+
+      return next(error);
+    }
+
+    if (!user.email.verified) {
+      const error = new CustomError("Email address is not yet verified", 403);
+
+      return next(error);
+    }
+
+    if (!user.password) {
+      const error = new CustomError(
+        "Provided email uses google to authenticate",
+        403,
+      );
+
+      return next(error);
+    }
+
+    const passwordsMatch = await compare(request.body.password, user.password);
+
+    if (!passwordsMatch) {
+      const error = new CustomError(InvalidCredentialsMessage, 401);
+
+      return next(error);
+    }
+
+    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    response.status(200).json({ user: user.toJSON(), token });
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);
