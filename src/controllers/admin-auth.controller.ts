@@ -1,12 +1,14 @@
 import { compare, hash } from "bcrypt";
 import dayjs from "dayjs";
 import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 
 import {
+  InvalidCredentialsMessage,
   ServerErrorMessage,
   ValidationErrorMessage,
   getNotFoundMessage,
-} from "../constants/response-messages";
+} from "../constants";
 import getAdminResetPasswordEmail from "../helpers/emails/admin-reset-password";
 import getAdminVerificationEmail from "../helpers/emails/admin-verification-email";
 import {
@@ -17,6 +19,8 @@ import resend from "../helpers/get-resend";
 import getCustomValidationResults from "../helpers/get-validation-results";
 import { Admin } from "../models";
 import CustomError from "../utils/custom-error";
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as string;
 
 export const authWithGoogle = async (
   request: Request,
@@ -37,7 +41,12 @@ export const authWithGoogle = async (
 
     const admin = await Admin.findOne({ "email.value": request.body.email });
 
-    if (admin) return response.status(200).json(admin.toJSON());
+    const token = jwt.sign({ id: admin?.id }, JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    if (admin)
+      return response.status(200).json({ user: admin.toJSON(), token });
 
     const newAdminData = new Admin({
       name: request.body.name,
@@ -50,7 +59,7 @@ export const authWithGoogle = async (
 
     const savedAdmin = await newAdminData.save();
 
-    response.status(201).json(savedAdmin.toJSON());
+    response.status(201).json({ user: savedAdmin.toJSON(), token });
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);
@@ -325,6 +334,66 @@ export const resetPassword = async (
     return response
       .status(200)
       .json({ message: "Password is updated successfully" });
+  } catch {
+    const error = new CustomError(ServerErrorMessage);
+    next(error);
+  }
+};
+
+export const login = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getCustomValidationResults(request);
+
+    if (validationErrors) {
+      const error = new CustomError(
+        "Email and Password must be available in body",
+        400,
+        validationErrors,
+      );
+
+      return next(error);
+    }
+
+    const admin = await Admin.findOne({ "email.value": request.body.email });
+
+    if (!admin) {
+      const error = new CustomError(InvalidCredentialsMessage, 401);
+
+      return next(error);
+    }
+
+    if (!admin.email.verified) {
+      const error = new CustomError("Email address is not yet verified", 403);
+
+      return next(error);
+    }
+
+    if (!admin.password) {
+      const error = new CustomError(
+        "Provided email uses google to authenticate",
+        403,
+      );
+
+      return next(error);
+    }
+
+    const passwordsMatch = await compare(request.body.password, admin.password);
+
+    if (!passwordsMatch) {
+      const error = new CustomError(InvalidCredentialsMessage, 401);
+
+      return next(error);
+    }
+
+    const token = jwt.sign({ id: admin.id }, JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
+
+    response.status(200).json({ user: admin.toJSON(), token });
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);
