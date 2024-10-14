@@ -4,6 +4,7 @@ import { exit } from "node:process";
 import app from "./app";
 import { environment } from "./config";
 import connectDatabase from "./config/database";
+import initializeSocket from "./sockets";
 
 connectDatabase()
   .then(() => {
@@ -11,6 +12,8 @@ connectDatabase()
       // eslint-disable-next-line no-console
       console.log(`Server: http://localhost:${environment.port}`),
     );
+
+    initializeSocket(server);
 
     process.on("SIGTERM", () => {
       server.close(() => {
