@@ -5,6 +5,8 @@ import { Server } from "socket.io";
 
 import { environment } from "../config";
 
+export const socketMap = new Map<string, string>();
+
 export default function initializeSocket(server: http.Server) {
   const io = new Server(server, { cors: { origin: "*" } });
 
@@ -13,6 +15,10 @@ export default function initializeSocket(server: http.Server) {
     const userRole = socket.handshake.auth.role;
     try {
       if (!token) return next(new Error("Token is invalid"));
+
+      if (!["admin", "user"].includes(userRole))
+        return next(new Error("User role is invalid"));
+
       const decodedToken = verify(
         token,
         environment.jwtSecret,
@@ -21,8 +27,9 @@ export default function initializeSocket(server: http.Server) {
       if (!isValidObjectId(decodedToken.id))
         return next(new Error("Token is invalid"));
 
-      if (!["admin", "user"].includes(userRole))
-        return next(new Error("Role are invalid"));
+      socket.handshake.query = {
+        userId: decodedToken.id,
+      };
 
       next();
     } catch {
@@ -31,7 +38,7 @@ export default function initializeSocket(server: http.Server) {
   });
 
   io.on("connection", (socket) => {
-    socket.on("disconnect", () => {});
+    socketMap.set(socket.handshake.query.userId as string, socket.id);
   });
 
   return io;
