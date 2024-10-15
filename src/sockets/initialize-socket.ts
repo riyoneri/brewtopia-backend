@@ -29,6 +29,7 @@ export default function initializeSocket(server: http.Server) {
 
       socket.handshake.query = {
         userId: decodedToken.id,
+        role: userRole,
       };
 
       next();
@@ -38,7 +39,10 @@ export default function initializeSocket(server: http.Server) {
   });
 
   io.on("connection", (socket) => {
-    socketMap.set(socket.handshake.query.userId as string, socket.id);
+    socketMap.set(
+      `${socket.handshake.query.role}:${socket.handshake.query.userId}`,
+      socket.id,
+    );
   });
 
   return io;
