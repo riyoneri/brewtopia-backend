@@ -40,9 +40,13 @@ export const authWithGoogle = async (
 
     const admin = await Admin.findOne({ "email.value": request.body.email });
 
-    const token = jwt.sign({ id: admin?.id }, environment.jwtSecret, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: admin?.id, role: "admin" },
+      environment.jwtSecret,
+      {
+        expiresIn: "1h",
+      },
+    );
 
     if (admin)
       return response.status(200).json({ user: admin.toJSON(), token });
@@ -388,9 +392,13 @@ export const login = async (
       return next(error);
     }
 
-    const token = jwt.sign({ id: admin.id }, environment.jwtSecret, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: admin.id, role: "admin" },
+      environment.jwtSecret,
+      {
+        expiresIn: "1h",
+      },
+    );
 
     response.status(200).json({ user: admin.toJSON(), token });
   } catch {
