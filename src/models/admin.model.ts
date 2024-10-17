@@ -12,7 +12,7 @@ interface Notification {
   link: string;
 }
 
-interface IAdmin {
+export interface IAdmin {
   name: string;
   email: {
     value: string;
