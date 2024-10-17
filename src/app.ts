@@ -2,6 +2,7 @@ import bodyParser from "body-parser";
 import compression from "compression";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
+import { expressjwt } from "express-jwt";
 import helmet from "helmet";
 import morgan from "morgan";
 import { RateLimiterMemory } from "rate-limiter-flexible";
@@ -32,7 +33,13 @@ app.use((request: Request, response: Response, next: NextFunction) => {
     .catch(() => response.status(429).json({ message: "Too many requests" }));
 });
 
-app.use("/api", appRouter);
+app.use(
+  "/api",
+  expressjwt({ secret: environment.jwtSecret, algorithms: ["HS256"] }).unless({
+    path: /auth/,
+  }),
+  appRouter,
+);
 
 app.use((_request: Request, response: Response, _next: NextFunction) => {
   response.status(404).json({ message: "URL does not exist" });
@@ -43,9 +50,14 @@ app.use(
     error: CustomError,
     _request: Request,
     response: Response,
-    _next: NextFunction,
+    next: NextFunction,
   ) => {
-    const { message, errors, statusCode } = error;
+    const { message, errors } = error;
+
+    let { statusCode } = error;
+
+    if (response.headersSent) return next(error);
+    if (error.name === "UnauthorizedError") statusCode = 401;
 
     response.status(statusCode || 500).json({ message, errors });
   },
