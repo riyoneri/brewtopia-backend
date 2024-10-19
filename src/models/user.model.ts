@@ -63,7 +63,6 @@ const userSchema = new Schema<IUser>(
         delete returnValue.password;
         delete returnValue._id;
         delete returnValue.authTokens;
-        delete returnValue.active;
 
         return {
           id: document.id,
