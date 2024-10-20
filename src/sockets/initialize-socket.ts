@@ -1,14 +1,17 @@
 import { JwtPayload, verify } from "jsonwebtoken";
 import { isValidObjectId } from "mongoose";
 import http from "node:http";
-import { Server } from "socket.io";
+import { DefaultEventsMap, Server, Socket } from "socket.io";
 
 import { environment } from "../config";
+
+export let io: Server;
+export let socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap>;
 
 export const socketMap = new Map<string, string>();
 
 export default function initializeSocket(server: http.Server) {
-  const io = new Server(server, { cors: { origin: "*" } });
+  io = new Server(server, { cors: { origin: "*" } });
 
   io.use((socket, next) => {
     const token = socket.handshake.auth.token;
@@ -38,10 +41,13 @@ export default function initializeSocket(server: http.Server) {
     }
   });
 
-  io.on("connection", (socket) => {
+  io.on("connection", (newSocket) => {
+    socket = newSocket;
+    io.to(socket.id).emit("lion", { client: "Lion" });
+
     socketMap.set(
-      `${socket.handshake.query.role}:${socket.handshake.query.userId}`,
-      socket.id,
+      `${newSocket.handshake.query.role}:${newSocket.handshake.query.userId}`,
+      newSocket.id,
     );
   });
 
