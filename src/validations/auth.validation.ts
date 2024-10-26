@@ -144,3 +144,14 @@ export const resetPasswordChain = () => [
     .custom((value, { req }) => req.body.password === value)
     .withMessage("Passwords must match"),
 ];
+
+export const loginChain = () => [
+  body(["email", "password"], "Email and Password must be available in body")
+    .isString()
+    .notEmpty({ ignore_whitespace: true }),
+  body("email")
+    .isString()
+    .isEmail()
+    .trim()
+    .normalizeEmail({ all_lowercase: true }),
+];
