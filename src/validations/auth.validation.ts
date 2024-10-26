@@ -104,3 +104,22 @@ export const verifyEmailChain = () => [
     .notEmpty({ ignore_whitespace: true })
     .trim(),
 ];
+
+export const forgotPasswordChain = () => [
+  body("email", "Email is required")
+    .isString()
+    .notEmpty({ ignore_whitespace: true })
+    .isEmail()
+    .withMessage("Email must be valid")
+    .trim()
+    .normalizeEmail({ all_lowercase: true }),
+  body("redirectUrl", "Redirect url is required")
+    .isString()
+    .notEmpty({ ignore_whitespace: true })
+    .isURL({
+      require_protocol: true,
+      allow_query_components: false,
+      require_tld: environment.nodeEnv === "production",
+    })
+    .withMessage("Redirect url must be a valid url"),
+];
