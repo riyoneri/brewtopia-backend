@@ -6,22 +6,23 @@ import { environment } from "../config";
 export const authWithGoogleChain = () => [
   body("name", "Name is required")
     .isString()
-    .notEmpty({ ignore_whitespace: true })
-    .trim(),
+    .trim()
+    .notEmpty({ ignore_whitespace: true }),
   body("email", "Email must be valid google mail")
     .isString()
+    .trim()
     .notEmpty({ ignore_whitespace: true })
     .isEmail({ host_whitelist: ["gmail.com"] })
-    .trim()
     .normalizeEmail({ all_lowercase: true }),
   body("picture", "Image must be valid google image url")
     .isString()
-    .optional({ values: "undefined" })
-    .isURL({ host_whitelist: ["lh3.googleusercontent.com"] })
+    .trim()
     .notEmpty({ ignore_whitespace: true })
-    .trim(),
+    .optional({ values: "undefined" })
+    .isURL({ host_whitelist: ["lh3.googleusercontent.com"] }),
   header("authorization", "Callback token is required")
     .isString()
+    .trim()
     .notEmpty({ ignore_whitespace: true })
     .bail()
     .custom((value) => {
@@ -38,14 +39,14 @@ export const authWithGoogleChain = () => [
 export const registerChain = <T>(model: Model<T>) => [
   body("name", "Name is required")
     .isString()
-    .notEmpty({ ignore_whitespace: true })
-    .trim(),
+    .trim()
+    .notEmpty({ ignore_whitespace: false }),
   body("email", "Email is required")
     .isString()
+    .trim()
     .notEmpty({ ignore_whitespace: true })
     .isEmail()
     .withMessage("Email must be valid")
-    .trim()
     .normalizeEmail({ all_lowercase: true })
     .bail()
     .custom((value) =>
@@ -69,6 +70,7 @@ export const registerChain = <T>(model: Model<T>) => [
     .withMessage("Passwords must match"),
   body("redirectUrl", "Redirect url is required")
     .isString()
+    .trim()
     .notEmpty({ ignore_whitespace: true })
     .isURL({
       require_protocol: true,
@@ -81,14 +83,14 @@ export const registerChain = <T>(model: Model<T>) => [
 export const resendVerificationEmailChain = () => [
   body("email", "Email is required")
     .isString()
+    .trim()
     .notEmpty({ ignore_whitespace: true })
     .isEmail()
     .withMessage("Email must be valid")
-    .trim()
-    .normalizeEmail({ all_lowercase: true })
-    .bail(),
+    .normalizeEmail({ all_lowercase: true }),
   body("redirectUrl", "Redirect url is required")
     .isString()
+    .trim()
     .notEmpty({ ignore_whitespace: true })
     .isURL({
       require_protocol: true,
@@ -101,20 +103,21 @@ export const resendVerificationEmailChain = () => [
 export const verifyEmailChain = () => [
   body("token", "Token is required")
     .isString()
-    .notEmpty({ ignore_whitespace: true })
-    .trim(),
+    .trim()
+    .notEmpty({ ignore_whitespace: true }),
 ];
 
 export const forgotPasswordChain = () => [
   body("email", "Email is required")
     .isString()
+    .trim()
     .notEmpty({ ignore_whitespace: true })
     .isEmail()
     .withMessage("Email must be valid")
-    .trim()
     .normalizeEmail({ all_lowercase: true }),
   body("redirectUrl", "Redirect url is required")
     .isString()
+    .trim()
     .notEmpty({ ignore_whitespace: true })
     .isURL({
       require_protocol: true,
@@ -127,8 +130,8 @@ export const forgotPasswordChain = () => [
 export const resetPasswordChain = () => [
   body("token", "Token is required")
     .isString()
-    .notEmpty({ ignore_whitespace: true })
-    .trim(),
+    .trim()
+    .notEmpty({ ignore_whitespace: true }),
   body("password", "Password is required")
     .isString()
     .notEmpty({ ignore_whitespace: true })
@@ -151,7 +154,8 @@ export const loginChain = () => [
     .notEmpty({ ignore_whitespace: true }),
   body("email")
     .isString()
-    .isEmail()
     .trim()
+    .notEmpty({ ignore_whitespace: true })
+    .isEmail()
     .normalizeEmail({ all_lowercase: true }),
 ];
