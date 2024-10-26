@@ -97,3 +97,10 @@ export const resendVerificationEmailChain = () => [
     })
     .withMessage("Redirect url must be a valid url"),
 ];
+
+export const verifyEmailChain = () => [
+  body("token", "Token is required")
+    .isString()
+    .notEmpty({ ignore_whitespace: true })
+    .trim(),
+];
