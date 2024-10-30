@@ -56,31 +56,31 @@ jobs:
       - name: Start application
         run: npm start &
 
-  deploy:
-    needs: [test-app, validate-deployment]
+  # deploy:
+  #   needs: [test-app, validate-deployment]
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.x"
+  #   steps:
+  #     - name: Set up Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: "20.x"
 
-      - name: Checkout the repository
-        uses: actions/checkout@v4
+  #     - name: Checkout the repository
+  #       uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm install
+  #     - name: Install dependencies
+  #       run: npm install
 
-      - name: Build the app
-        run: npm run build
+  #     - name: Build the app
+  #       run: npm run build
 
-      - name: Move files to server
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "dist,package*"
-          target: "brewtopia"
+  #     - name: Move files to server
+  #       uses: appleboy/scp-action@master
+  #       with:
+  #         host: ${{ secrets.REMOTE_HOST }}
+  #         username: ${{ secrets.REMOTE_USER }}
+  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #         source: "dist,package*"
+  #         target: "brewtopia"
