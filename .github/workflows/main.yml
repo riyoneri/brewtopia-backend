@@ -10,7 +10,8 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
-  test-app:
+  test-application:
+    name: Test Application
     runs-on: ubuntu-latest
 
     steps:
@@ -32,8 +33,10 @@ jobs:
         run: npm test
 
   validate-deployment:
-    needs: test-app
+    name: Validate Deployment
+    needs: test-application
     runs-on: ubuntu-latest
+
     steps:
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -58,54 +61,14 @@ jobs:
       - name: Start application
         run: npm start &
 
-  Deploy-Production:
+  deploy-to-vercel:
+    name: Deploy to Vercel
+    needs: validate-deployment
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      # - name: Install Vercel CLI
-      #   run: npm install --global vercel@latest
-
-      # - name: Pull Vercel Environment Information
-      #   run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      # - name: Build Project Artifacts
-      #   run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Checkout the repository
+        uses: actions/checkout@v4
 
       - name: Deploy Project Artifacts to Vercel Project
         run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-  # deploy:
-  #   needs: [test-app, validate-deployment]
-
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Set up Node.js
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "20.x"
-
-  #     - name: Checkout the repository
-  #       uses: actions/checkout@v4
-
-  #     - name: Install dependencies
-  #       run: npm install
-
-  #     - name: Build the app
-  #       run: npm run build
-
-  #     - name: Move files to server
-  #       uses: appleboy/scp-action@master
-  #       with:
-  #         host: ${{ secrets.REMOTE_HOST }}
-  #         username: ${{ secrets.REMOTE_USER }}
-  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
-  #         source: "dist,package*"
-  #         target: "brewtopia"
