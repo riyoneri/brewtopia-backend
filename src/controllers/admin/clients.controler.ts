@@ -4,11 +4,11 @@ import {
   ServerErrorMessage,
   ValidationErrorMessage,
   getNotFoundMessage,
-} from "../constants";
-import getCustomValidationResults from "../helpers/get-validation-results";
-import { User } from "../models";
-import { clientSocket } from "../sockets";
-import CustomError from "../utils/custom-error";
+} from "../../constants";
+import getCustomValidationResults from "../../helpers/get-validation-results";
+import { User } from "../../models";
+import { clientSocket } from "../../sockets";
+import CustomError from "../../utils/custom-error";
 
 export const listCustomers = async (
   request: Request,
