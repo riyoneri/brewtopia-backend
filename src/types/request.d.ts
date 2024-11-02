@@ -1,5 +1,4 @@
-import { IAdmin } from "../models/admin.model";
-import { IUser } from "../models/user.model";
+import { IAdmin, IUser } from "../models";
 
 declare global {
   namespace Express {

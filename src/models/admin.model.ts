@@ -1,4 +1,5 @@
 import {
+  Document,
   HydratedArraySubdocument,
   HydratedDocument,
   Model,
@@ -12,7 +13,7 @@ interface Notification {
   link: string;
 }
 
-export interface IAdmin {
+export interface IAdmin extends Document {
   name: string;
   email: {
     value: string;
