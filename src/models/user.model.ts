@@ -58,7 +58,7 @@ const userSchema = new Schema<IUser>(
     timestamps: {
       updatedAt: false,
     },
-    toJSON: {
+    toObject: {
       transform(document, returnValue) {
         delete returnValue.password;
         delete returnValue._id;

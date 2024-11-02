@@ -27,7 +27,7 @@ export const listCustomers = async (
       .limit(limit)
       .transform((documents) =>
         documents.map((document) => ({
-          ...document.toJSON(),
+          ...document.toObject(),
           active: document.active,
         })),
       );

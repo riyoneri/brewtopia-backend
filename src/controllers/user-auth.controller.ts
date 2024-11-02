@@ -48,7 +48,8 @@ export const authWithGoogle = async (
       },
     );
 
-    if (user) return response.status(200).json({ user: user.toJSON(), token });
+    if (user)
+      return response.status(200).json({ user: user.toObject(), token });
 
     const newUserData = new User({
       name: request.body.name,
@@ -61,7 +62,7 @@ export const authWithGoogle = async (
 
     const savedUser = await newUserData.save();
 
-    response.status(201).json({ user: savedUser.toJSON(), token });
+    response.status(201).json({ user: savedUser.toObject(), token });
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);
@@ -307,7 +308,9 @@ export const resetPassword = async (
       $and: [
         { "authTokens.resetPassword.value": request.body.token },
         {
-          "authTokens.resetPassword.expirationDate": { $gt: dayjs().toJSON() },
+          "authTokens.resetPassword.expirationDate": {
+            $gt: dayjs().toJSON(),
+          },
         },
       ],
     });
@@ -399,7 +402,7 @@ export const login = async (
       },
     );
 
-    response.status(200).json({ user: user.toJSON(), token });
+    response.status(200).json({ user: user.toObject(), token });
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);

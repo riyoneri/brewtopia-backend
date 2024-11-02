@@ -105,7 +105,7 @@ const adminSchema = new Schema<IAdmin, AdminModelType>(
     timestamps: {
       updatedAt: false,
     },
-    toJSON: {
+    toObject: {
       transform(document, returnValue) {
         delete returnValue.password;
         delete returnValue._id;
