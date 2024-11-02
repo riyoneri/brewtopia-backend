@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { ServerErrorMessage, ValidationErrorMessage } from "../../constants";
 import getCustomValidationResults from "../../helpers/get-validation-results";
+import { Category } from "../../models";
 import CustomError from "../../utils/custom-error";
 
 export const createCategory = async (
@@ -21,7 +22,11 @@ export const createCategory = async (
       return next(error);
     }
 
-    response.status(400).json({ message: "😭💔💀" });
+    const newCategoryData = new Category({ name: request.body.name });
+
+    const savedCategory = await newCategoryData.save();
+
+    response.status(201).json(savedCategory.toObject());
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);
