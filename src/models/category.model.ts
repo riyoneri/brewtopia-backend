@@ -16,6 +16,7 @@ const categorySchema = new Schema<ICategory>(
     toObject: {
       transform(document, returnValue) {
         delete returnValue._id;
+        delete returnValue.name_lower;
 
         return {
           id: document.id,
