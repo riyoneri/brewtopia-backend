@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ServerErrorMessage, ValidationErrorMessage } from "../../constants";
+import { normalizeCategory } from "../../helpers";
 import getCustomValidationResults from "../../helpers/get-validation-results";
 import { Category } from "../../models";
 import CustomError from "../../utils/custom-error";
@@ -22,7 +23,10 @@ export const createCategory = async (
       return next(error);
     }
 
-    const newCategoryData = new Category({ name: request.body.name });
+    const newCategoryData = new Category({
+      name: request.body.name,
+      name_lower: normalizeCategory(request.body.name),
+    });
 
     const savedCategory = await newCategoryData.save();
 
