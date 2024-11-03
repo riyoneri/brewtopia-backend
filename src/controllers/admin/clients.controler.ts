@@ -22,7 +22,7 @@ export const listCustomers = async (
 
     const totalUsers = await User.countDocuments();
 
-    const users = await User.find({}, undefined, {})
+    const users = await User.find()
       .skip(skip)
       .limit(limit)
       .transform((documents) =>
@@ -32,7 +32,7 @@ export const listCustomers = async (
         })),
       );
 
-    response.status(200).json({ users: users, total: totalUsers });
+    response.status(200).json({ users, total: totalUsers });
   } catch {
     const error = new CustomError(ServerErrorMessage);
     next(error);
