@@ -24,10 +24,12 @@ router
     clientsController.changeClientStatus,
   );
 
-router.post(
-  "/categories",
-  createCategoryChain(),
-  categoriesController.createCategory,
-);
+router
+  .post(
+    "/categories",
+    createCategoryChain(),
+    categoriesController.createCategory,
+  )
+  .get("/categories", categoriesController.getAllCategories);
 
 export default router;
