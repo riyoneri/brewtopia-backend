@@ -10,14 +10,14 @@ import {
   ValidationErrorMessage,
   getNotFoundMessage,
 } from "../constants";
-import getAdminResetPasswordEmail from "../helpers/emails/admin-reset-password";
-import getAdminVerificationEmail from "../helpers/emails/admin-verification-email";
 import {
+  getAdminResetPasswordEmail,
+  getAdminVerificationEmail,
   getResetPasswordUniqueId,
+  getValidationResult,
   getVerifyEmailUniqueId,
-} from "../helpers/generate-unique-id";
-import resend from "../helpers/get-resend";
-import getCustomValidationResults from "../helpers/get-validation-results";
+  resend,
+} from "../helpers";
 import { Admin } from "../models";
 import CustomError from "../utils/custom-error";
 
@@ -27,7 +27,7 @@ export const authWithGoogle = async (
   next: NextFunction,
 ) => {
   try {
-    const validationErrors = getCustomValidationResults(request);
+    const validationErrors = getValidationResult(request);
 
     if (validationErrors) {
       const error = new CustomError(
@@ -75,7 +75,7 @@ export const createAdmin = async (
   next: NextFunction,
 ) => {
   try {
-    const validationErrors = getCustomValidationResults(request);
+    const validationErrors = getValidationResult(request);
 
     if (validationErrors) {
       const error = new CustomError(
@@ -123,7 +123,7 @@ export const resendVerificationEmail = async (
   next: NextFunction,
 ) => {
   try {
-    const validationErrors = getCustomValidationResults(request);
+    const validationErrors = getValidationResult(request);
 
     if (validationErrors) {
       const error = new CustomError(
@@ -176,7 +176,7 @@ export const verifyEmail = async (
   next: NextFunction,
 ) => {
   try {
-    const validationErrors = getCustomValidationResults(request);
+    const validationErrors = getValidationResult(request);
 
     if (validationErrors) {
       const error = new CustomError(
@@ -224,7 +224,7 @@ export const forgotPassword = async (
   next: NextFunction,
 ) => {
   try {
-    const validationErrors = getCustomValidationResults(request);
+    const validationErrors = getValidationResult(request);
 
     if (validationErrors) {
       const error = new CustomError(
@@ -293,7 +293,7 @@ export const resetPassword = async (
   next: NextFunction,
 ) => {
   try {
-    const validationErrors = getCustomValidationResults(request);
+    const validationErrors = getValidationResult(request);
 
     if (validationErrors) {
       const error = new CustomError(
@@ -349,7 +349,7 @@ export const login = async (
   next: NextFunction,
 ) => {
   try {
-    const validationErrors = getCustomValidationResults(request);
+    const validationErrors = getValidationResult(request);
 
     if (validationErrors) {
       const error = new CustomError(

@@ -1,4 +1,4 @@
-const getUserVerificationemail = (redirectUrl: string) => `
+const getUserVerificationEmail = (redirectUrl: string) => `
     <!DOCTYPE html>
     <html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" style="font-family: 'DM Sans', sans-serif;">
     <head>
@@ -46,4 +46,4 @@ const getUserVerificationemail = (redirectUrl: string) => `
     </body>
     </html>
     `;
-export default getUserVerificationemail;
+export default getUserVerificationEmail;

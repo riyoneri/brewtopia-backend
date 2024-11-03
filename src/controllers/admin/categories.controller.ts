@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ServerErrorMessage, ValidationErrorMessage } from "../../constants";
-import { normalizeCategory } from "../../helpers";
-import getCustomValidationResults from "../../helpers/get-validation-results";
+import { getValidationResult, normalizeCategory } from "../../helpers";
 import { Category } from "../../models";
 import CustomError from "../../utils/custom-error";
 
@@ -12,7 +11,7 @@ export const createCategory = async (
   next: NextFunction,
 ) => {
   try {
-    const validationErrors = getCustomValidationResults(request);
+    const validationErrors = getValidationResult(request);
 
     if (validationErrors) {
       const error = new CustomError(

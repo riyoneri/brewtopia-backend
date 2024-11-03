@@ -5,7 +5,7 @@ import {
   ValidationErrorMessage,
   getNotFoundMessage,
 } from "../../constants";
-import getCustomValidationResults from "../../helpers/get-validation-results";
+import { getValidationResult } from "../../helpers";
 import { User } from "../../models";
 import { clientSocket } from "../../sockets";
 import CustomError from "../../utils/custom-error";
@@ -45,7 +45,7 @@ export const changeClientStatus = async (
   next: NextFunction,
 ) => {
   try {
-    const validationErrors = getCustomValidationResults(request);
+    const validationErrors = getValidationResult(request);
 
     if (validationErrors) {
       const error = new CustomError(
