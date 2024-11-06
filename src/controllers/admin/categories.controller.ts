@@ -94,3 +94,38 @@ export const getSingleCategory = async (
     next(error);
   }
 };
+
+export const updateCategory = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getValidationResult(request);
+
+    if (validationErrors) {
+      const error = new CustomError(
+        ValidationErrorMessage,
+        400,
+        validationErrors,
+      );
+      return next(error);
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+      request.params.categoryId,
+      { name: request.body.name },
+      { new: true },
+    );
+
+    if (!updatedCategory)
+      return response
+        .status(404)
+        .json({ message: getNotFoundMessage("Category") });
+
+    response.status(200).json(updatedCategory.toObject());
+  } catch {
+    const error = new CustomError(ServerErrorMessage);
+    next(error);
+  }
+};
