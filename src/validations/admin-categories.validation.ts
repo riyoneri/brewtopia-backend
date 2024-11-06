@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 
 import { normalizeCategory } from "../helpers";
 import { Category } from "../models";
@@ -16,3 +16,10 @@ export const createCategoryChain = () =>
         },
       ),
     );
+
+export const getSingleCategoryChain = () =>
+  param("categoryId", "Invalid category id")
+    .isString()
+    .trim()
+    .notEmpty({ ignore_whitespace: true })
+    .isMongoId();
