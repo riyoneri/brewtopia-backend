@@ -3,7 +3,11 @@ import { body, param } from "express-validator";
 
 import { categoriesController, clientsController } from "../controllers";
 import adminAuthMiddleware from "../middlewares/admin-auth.middleware";
-import { createCategoryChain, getAllSanitizer } from "../validations";
+import {
+  createCategoryChain,
+  getAllSanitizer,
+  getSingleCategoryChain,
+} from "../validations";
 
 const router = Router();
 
@@ -30,6 +34,11 @@ router
     createCategoryChain(),
     categoriesController.createCategory,
   )
-  .get("/categories", categoriesController.getAllCategories);
+  .get("/categories", getAllSanitizer(), categoriesController.getAllCategories)
+  .get(
+    "/categories/:categoryId",
+    getSingleCategoryChain(),
+    categoriesController.getSingleCategory,
+  );
 
 export default router;
