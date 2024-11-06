@@ -3,13 +3,13 @@ import { body, param } from "express-validator";
 
 import { categoriesController, clientsController } from "../controllers";
 import adminAuthMiddleware from "../middlewares/admin-auth.middleware";
-import { createCategoryChain } from "../validations";
+import { createCategoryChain, getAllSanitizer } from "../validations";
 
 const router = Router();
 
 router
   .use(adminAuthMiddleware)
-  .get("/clients", clientsController.listCustomers)
+  .get("/clients", getAllSanitizer(), clientsController.listCustomers)
   .patch(
     "/clients/:userId/status",
     [
