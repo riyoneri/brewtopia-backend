@@ -7,6 +7,7 @@ import {
   createCategoryChain,
   getAllSanitizer,
   getSingleCategoryChain,
+  updateCategoryChain,
 } from "../validations";
 
 const router = Router();
@@ -39,6 +40,11 @@ router
     "/categories/:categoryId",
     getSingleCategoryChain(),
     categoriesController.getSingleCategory,
+  )
+  .patch(
+    "/categories/:categoryId",
+    updateCategoryChain(),
+    categoriesController.updateCategory,
   );
 
 export default router;
