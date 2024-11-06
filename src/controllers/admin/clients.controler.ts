@@ -16,8 +16,8 @@ export const listCustomers = async (
   next: NextFunction,
 ) => {
   try {
-    const page = Number(request.query.page) || 1;
-    const limit = Number(request.query.limit) || 10;
+    const page = Number(request.query.page);
+    const limit = Number(request.query.limit);
     const skip = (page - 1) * limit;
 
     const totalUsers = await User.countDocuments();
