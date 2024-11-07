@@ -5,6 +5,7 @@ import { categoriesController, clientsController } from "../controllers";
 import adminAuthMiddleware from "../middlewares/admin-auth.middleware";
 import {
   createCategoryChain,
+  deleteCategoryChain,
   getAllSanitizer,
   getSingleCategoryChain,
   updateCategoryChain,
@@ -45,6 +46,11 @@ router
     "/categories/:categoryId",
     updateCategoryChain(),
     categoriesController.updateCategory,
+  )
+  .delete(
+    "/categories/:categoryId",
+    deleteCategoryChain(),
+    categoriesController.deleteCategory,
   );
 
 export default router;
