@@ -129,3 +129,25 @@ export const updateCategory = async (
     next(error);
   }
 };
+
+export const deleteCategory = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getValidationResult(request);
+
+    if (validationErrors) {
+      const error = new CustomError("Category id is invalid", 400);
+      return next(error);
+    }
+
+    await Category.findByIdAndDelete(request.params.categoryId);
+
+    response.status(200).json({ message: "Category was deleted" });
+  } catch {
+    const error = new CustomError(ServerErrorMessage);
+    next(error);
+  }
+};
