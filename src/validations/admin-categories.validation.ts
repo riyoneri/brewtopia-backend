@@ -44,3 +44,10 @@ export const updateCategoryChain = () => [
       ),
     ),
 ];
+
+export const deleteCategoryChain = () =>
+  param("categoryId", "Category id is invalid")
+    .isString()
+    .trim()
+    .notEmpty({ ignore_whitespace: true })
+    .isMongoId();
