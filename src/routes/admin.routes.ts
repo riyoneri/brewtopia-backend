@@ -1,10 +1,18 @@
 import { Router } from "express";
 import { body, param } from "express-validator";
 
-import { categoriesController, clientsController } from "../controllers";
-import { adminAuthMiddleware } from "../middlewares";
+import {
+  categoriesController,
+  clientsController,
+  productsController,
+} from "../controllers";
+import {
+  adminAuthMiddleware,
+  productFileUploadMiddleware,
+} from "../middlewares";
 import {
   createCategoryChain,
+  createProductChain,
   deleteCategoryChain,
   getAllSanitizer,
   getSingleCategoryChain,
@@ -52,5 +60,12 @@ router
     deleteCategoryChain(),
     categoriesController.deleteCategory,
   );
+
+router.post(
+  "/products",
+  productFileUploadMiddleware,
+  createProductChain(),
+  productsController.createProduct,
+);
 
 export default router;
