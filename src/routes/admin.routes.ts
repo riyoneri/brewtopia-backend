@@ -15,7 +15,7 @@ const router = Router();
 
 router
   .use(adminAuthMiddleware)
-  .get("/clients", getAllSanitizer(), clientsController.listCustomers)
+  .get("/clients", getAllSanitizer(), clientsController.getAllClients)
   .patch(
     "/clients/:userId/status",
     [
