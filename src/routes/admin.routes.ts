@@ -2,7 +2,7 @@ import { Router } from "express";
 import { body, param } from "express-validator";
 
 import { categoriesController, clientsController } from "../controllers";
-import adminAuthMiddleware from "../middlewares/admin-auth.middleware";
+import { adminAuthMiddleware } from "../middlewares";
 import {
   createCategoryChain,
   deleteCategoryChain,
