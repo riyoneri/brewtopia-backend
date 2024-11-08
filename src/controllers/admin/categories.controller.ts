@@ -46,16 +46,15 @@ export const getAllCategories = async (
   next: NextFunction,
 ) => {
   try {
-    const page = Number(request.query.page);
-    const limit = Number(request.query.limit);
-    const skip = (page - 1) * limit;
+    const page = Number(request.query.page) || undefined;
+    const limit = Number(request.query.limit || undefined);
+    const skip = page && limit ? (page - 1) * limit : undefined;
 
     const totalCategories = await Category.countDocuments();
 
-    const categories = await Category.find()
-      .skip(skip)
-      .limit(limit)
-      .transform((document) => document.map((document) => document.toObject()));
+    const categories = await Category.find({}, {}, { skip, limit }).transform(
+      (document) => document.map((document) => document.toObject()),
+    );
 
     response.status(200).json({ categories, total: totalCategories });
   } catch {

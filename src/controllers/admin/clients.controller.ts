@@ -10,27 +10,25 @@ import { User } from "../../models";
 import { clientSocket } from "../../sockets";
 import CustomError from "../../utils/custom-error";
 
-export const listCustomers = async (
+export const getAllClients = async (
   request: Request,
   response: Response,
   next: NextFunction,
 ) => {
   try {
-    const page = Number(request.query.page);
-    const limit = Number(request.query.limit);
-    const skip = (page - 1) * limit;
+    const page = Number(request.query.page) || undefined;
+    const limit = Number(request.query.limit || undefined);
+    const skip = page && limit ? (page - 1) * limit : undefined;
 
     const totalUsers = await User.countDocuments();
 
-    const users = await User.find()
-      .skip(skip)
-      .limit(limit)
-      .transform((documents) =>
+    const users = await User.find({}, {}, { skip, limit }).transform(
+      (documents) =>
         documents.map((document) => ({
           ...document.toObject(),
           active: document.active,
         })),
-      );
+    );
 
     response.status(200).json({ users, total: totalUsers });
   } catch {
