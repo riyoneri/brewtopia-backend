@@ -1,4 +1,4 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { NextFunction, Request, Response } from "express";
 import sharp from "sharp";
 
@@ -8,9 +8,9 @@ import {
   ValidationErrorMessage,
   getNotFoundMessage,
 } from "../../constants";
-import { getValidationResult } from "../../helpers";
+import { getProductImageUniqueId, getValidationResult } from "../../helpers";
 import getS3Client from "../../helpers/get-s3client";
-import { Category } from "../../models";
+import { Category, Product } from "../../models";
 import CustomError from "../../utils/custom-error";
 
 export const createProduct = async (
@@ -18,6 +18,9 @@ export const createProduct = async (
   response: Response,
   next: NextFunction,
 ) => {
+  let imagePath = "";
+  const s3 = getS3Client();
+
   try {
     const validationErrors = getValidationResult(request);
 
@@ -44,18 +47,37 @@ export const createProduct = async (
       .resize(1000, undefined, { withoutEnlargement: true })
       .toBuffer();
 
-    const s3 = getS3Client();
+    imagePath = `products/${getProductImageUniqueId()}.webp`;
 
     await s3.send(
       new PutObjectCommand({
         Bucket: environment.awsBucketName,
         Body: resizedImage,
-        Key: "lion",
+        Key: imagePath,
       }),
     );
 
-    response.status(400).json({ message: "Not implemented" });
+    const newProductData = new Product({
+      name: request.body.name,
+      imageUrl: `${environment.awsS3Url}/${imagePath}`,
+      price: request.body.price,
+      description: request.body.description,
+      category: request.body.category,
+    });
+
+    const savedProduct = await newProductData.save();
+
+    response.status(201).json(savedProduct.toObject());
   } catch {
+    if (imagePath) {
+      await s3.send(
+        new DeleteObjectCommand({
+          Bucket: environment.awsBucketName,
+          Key: imagePath,
+        }),
+      );
+    }
+
     const error = new CustomError(ServerErrorMessage);
     next(error);
   }
