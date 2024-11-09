@@ -6,7 +6,7 @@ import {
   getNotFoundMessage,
 } from "../../constants";
 import { getValidationResult, normalizeCategory } from "../../helpers";
-import { Category } from "../../models";
+import { Category, Product } from "../../models";
 import CustomError from "../../utils/custom-error";
 
 export const createCategory = async (
@@ -141,6 +141,20 @@ export const deleteCategory = async (
       const error = new CustomError("Category id is invalid", 400);
       return next(error);
     }
+
+    const category = await Category.findById(request.params.categoryId);
+
+    if (!category)
+      return response
+        .status(404)
+        .json({ message: getNotFoundMessage("Category") });
+
+    const categoryProduct = await Product.findOne({ category: category.id });
+
+    if (categoryProduct)
+      return response
+        .status(403)
+        .json({ message: "Category has some products" });
 
     await Category.findByIdAndDelete(request.params.categoryId);
 
