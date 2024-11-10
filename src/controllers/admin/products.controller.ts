@@ -82,3 +82,27 @@ export const createProduct = async (
     next(error);
   }
 };
+
+export const getAllProducts = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const page = Number(request.query.page) || undefined;
+    const limit = Number(request.query.limit || undefined);
+    const skip = page && limit ? (page - 1) * limit : undefined;
+    const totalProducts = await Product.countDocuments();
+
+    const products = await Product.find(
+      {},
+      {},
+      { skip, limit, populate: { path: "category", select: "name" } },
+    ).transform((document) => document.map((document) => document.toObject()));
+
+    response.status(200).json({ products, total: totalProducts });
+  } catch {
+    const error = new CustomError(ServerErrorMessage);
+    next(error);
+  }
+};
