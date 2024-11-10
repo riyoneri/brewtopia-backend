@@ -61,11 +61,13 @@ router
     categoriesController.deleteCategory,
   );
 
-router.post(
-  "/products",
-  productFileUploadMiddleware,
-  createProductChain(),
-  productsController.createProduct,
-);
+router
+  .post(
+    "/products",
+    productFileUploadMiddleware,
+    createProductChain(),
+    productsController.createProduct,
+  )
+  .get("/products", getAllSanitizer(), productsController.getAllProducts);
 
 export default router;
