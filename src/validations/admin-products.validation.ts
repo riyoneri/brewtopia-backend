@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 
 export const createProductChain = () => [
   body("name", "Name is required")
@@ -33,3 +33,10 @@ export const createProductChain = () => [
     .isMongoId()
     .withMessage("Category ID must be valid."),
 ];
+
+export const getSingleProductChain = () =>
+  param("productId", "Invalid product id")
+    .isString()
+    .trim()
+    .notEmpty({ ignore_whitespace: true })
+    .isMongoId();

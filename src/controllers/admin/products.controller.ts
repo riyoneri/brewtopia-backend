@@ -106,3 +106,34 @@ export const getAllProducts = async (
     next(error);
   }
 };
+
+export const getSingleProduct = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getValidationResult(request);
+
+    if (validationErrors) {
+      const error = new CustomError(
+        ValidationErrorMessage,
+        400,
+        validationErrors,
+      );
+      return next(error);
+    }
+
+    const product = await Product.findOne({ _id: request.params.productId });
+
+    if (!product)
+      return response
+        .status(404)
+        .json({ message: getNotFoundMessage("Product") });
+
+    response.status(200).json(product.toObject());
+  } catch {
+    const error = new CustomError(ServerErrorMessage);
+    next(error);
+  }
+};

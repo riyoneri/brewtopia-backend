@@ -16,6 +16,7 @@ import {
   deleteCategoryChain,
   getAllSanitizer,
   getSingleCategoryChain,
+  getSingleProductChain,
   updateCategoryChain,
 } from "../validations";
 
@@ -68,6 +69,11 @@ router
     createProductChain(),
     productsController.createProduct,
   )
-  .get("/products", getAllSanitizer(), productsController.getAllProducts);
+  .get("/products", getAllSanitizer(), productsController.getAllProducts)
+  .get(
+    "/products/:productId",
+    getSingleProductChain(),
+    productsController.getSingleProduct,
+  );
 
 export default router;
