@@ -113,7 +113,10 @@ export const updateCategory = async (
 
     const updatedCategory = await Category.findByIdAndUpdate(
       request.params.categoryId,
-      { name: request.body.name },
+      {
+        name: request.body.name,
+        name_lower: normalizeCategory(request.body.name),
+      },
       { new: true },
     );
 
