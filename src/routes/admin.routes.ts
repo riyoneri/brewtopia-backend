@@ -18,6 +18,7 @@ import {
   getSingleCategoryChain,
   getSingleProductChain,
   updateCategoryChain,
+  updateProductChain,
 } from "../validations";
 
 const router = Router();
@@ -74,6 +75,12 @@ router
     "/products/:productId",
     getSingleProductChain(),
     productsController.getSingleProduct,
+  )
+  .patch(
+    "/products/:productId",
+    productFileUploadMiddleware,
+    updateProductChain(),
+    productsController.updateProduct,
   );
 
 export default router;
