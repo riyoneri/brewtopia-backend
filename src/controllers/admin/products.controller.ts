@@ -230,3 +230,42 @@ export const updateProduct = async (
     next(error);
   }
 };
+
+export const deleteProduct = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validationErrors = getValidationResult(request);
+
+    if (validationErrors) {
+      const error = new CustomError("Product id is invalid", 400);
+      return next(error);
+    }
+
+    const deletedProduct = await Product.findByIdAndDelete(
+      request.params.productId,
+    );
+
+    if (!deletedProduct) {
+      return response
+        .status(404)
+        .json({ message: getNotFoundMessage("Product") });
+    }
+
+    const s3 = getS3Client();
+
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: environment.awsBucketName,
+        Key: deletedProduct.imageUrl.split(`${environment.awsS3Url}/`)[1],
+      }),
+    );
+
+    response.status(200).json({ message: "Product was deleted" });
+  } catch {
+    const error = new CustomError(ServerErrorMessage);
+    next(error);
+  }
+};
