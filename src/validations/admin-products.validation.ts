@@ -79,3 +79,10 @@ export const updateProductChain = () => [
     .isMongoId()
     .withMessage("Category ID must be valid."),
 ];
+
+export const deleteProductChain = () =>
+  param("productId", "Product id is invalid")
+    .isString()
+    .trim()
+    .notEmpty({ ignore_whitespace: true })
+    .isMongoId();
