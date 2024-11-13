@@ -14,6 +14,7 @@ import {
   createCategoryChain,
   createProductChain,
   deleteCategoryChain,
+  deleteProductChain,
   getAllSanitizer,
   getSingleCategoryChain,
   getSingleProductChain,
@@ -81,6 +82,11 @@ router
     productFileUploadMiddleware,
     updateProductChain(),
     productsController.updateProduct,
+  )
+  .delete(
+    "/products/:productId",
+    deleteProductChain(),
+    productsController.deleteProduct,
   );
 
 export default router;
