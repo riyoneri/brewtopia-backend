@@ -6,8 +6,6 @@ export const createProductChain = () => [
     .trim()
     .notEmpty({ ignore_whitespace: true }),
   body("price", "Price is required")
-    .isString()
-    .trim()
     .notEmpty({ ignore_whitespace: true })
     .isNumeric({ no_symbols: true })
     .withMessage("Price must not have any symbols")
@@ -52,8 +50,6 @@ export const updateProductChain = () => [
     .trim()
     .notEmpty({ ignore_whitespace: true }),
   body("price", "Price is required")
-    .isString()
-    .trim()
     .notEmpty({ ignore_whitespace: true })
     .isNumeric({ no_symbols: true })
     .withMessage("Price must not have any symbols")

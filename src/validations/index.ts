@@ -2,3 +2,4 @@ export * from "./auth.validation";
 export * from "./admin-categories.validation";
 export { default as getAllSanitizer } from "./get-all.validation";
 export * from "./admin-products.validation";
+export * from "./admin-promotions.validation";
