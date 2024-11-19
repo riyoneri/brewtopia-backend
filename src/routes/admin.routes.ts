@@ -5,6 +5,7 @@ import {
   categoriesController,
   clientsController,
   productsController,
+  promotionController,
 } from "../controllers";
 import {
   adminAuthMiddleware,
@@ -13,6 +14,7 @@ import {
 import {
   createCategoryChain,
   createProductChain,
+  createPromotion,
   deleteCategoryChain,
   deleteProductChain,
   getAllSanitizer,
@@ -88,5 +90,11 @@ router
     deleteProductChain(),
     productsController.deleteProduct,
   );
+
+router.post(
+  "/promotions",
+  createPromotion(),
+  promotionController.createPromotion,
+);
 
 export default router;

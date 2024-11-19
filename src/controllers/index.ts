@@ -3,3 +3,4 @@ export * as userAuthController from "./user-auth.controller";
 export * as clientsController from "./admin/clients.controller";
 export * as categoriesController from "./admin/categories.controller";
 export * as productsController from "./admin/products.controller";
+export * as promotionController from "./admin/promotion.controller";
